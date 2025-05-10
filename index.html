@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Todo List</title>
+  <link rel="icon" type="image/png" href="https://cdn-icons-png.flaticon.com/512/847/847969.png">
+  <link rel="stylesheet" href="index.css" />
+</head>
+<body>
+  <h1>📝 My Todo List</h1>
+
+  <div class="input-container">
+    <input type="text" id="taskInput" placeholder="Enter a task" />
+    <input type="time" id="startTime" />
+    <input type="time" id="endTime" />
+    <button onclick="add()">Add</button>
+  </div>
+
+  <ul id="listcontainer"></ul>
+
+  <script>
+    const ul = document.getElementById("listcontainer");
+
+    function add() {
+      const task = document.getElementById("taskInput").value.trim();
+      const start = document.getElementById("startTime").value;
+      const end = document.getElementById("endTime").value;
+
+      if (!task || !start || !end) {
+        alert("Please fill all fields.");
+        return;
+      }
+
+      const listitem = document.createElement("li");
+
+      listitem.innerHTML = `
+        <div>
+          <input type="checkbox" class="complete-checkbox" onchange="finishTask(this)" />
+          <strong>${task}</strong>
+          <div style="margin-top: 5px; font-size: 0.9em; color: #555;">
+            ⏰ ${start} - ${end}
+          </div>
+        </div>
+        <button onclick="deleteItem(event)">Delete</button>
+      `;
+
+      ul.appendChild(listitem);
+
+      // Clear inputs
+      document.getElementById("taskInput").value = "";
+      document.getElementById("startTime").value = "";
+      document.getElementById("endTime").value = "";
+    }
+
+    function deleteItem(event) {
+      event.target.parentElement.remove();
+    }
+
+    function finishTask(checkbox) {
+      if (checkbox.checked) {
+        alert("You're completed the task ✅");
+        const li = checkbox.closest("li");
+        li.style.opacity = "0.5";
+        setTimeout(() => {
+          li.remove();
+        }, 1000);
+      }
+    }
+  </script>
+</body>
+</html>
