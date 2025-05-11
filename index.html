@@ -12,8 +12,14 @@
 
   <div class="input-container">
     <input type="text" id="taskInput" placeholder="Enter a task" />
+    <input type="date" id="dueDate" />
     <input type="time" id="startTime" />
     <input type="time" id="endTime" />
+    <select id="priority">
+      <option value="Low">Low Priority</option>
+      <option value="Medium">Medium Priority</option>
+      <option value="High">High Priority</option>
+    </select>
     <button onclick="add()">Add</button>
   </div>
 
@@ -26,20 +32,25 @@
       const task = document.getElementById("taskInput").value.trim();
       const start = document.getElementById("startTime").value;
       const end = document.getElementById("endTime").value;
+      const due = document.getElementById("dueDate").value;
+      const priority = document.getElementById("priority").value;
 
-      if (!task || !start || !end) {
+      if (!task || !start || !end || !due || !priority) {
         alert("Please fill all fields.");
         return;
       }
 
       const listitem = document.createElement("li");
+      listitem.classList.add("priority-" + priority.toLowerCase());
 
       listitem.innerHTML = `
         <div>
           <input type="checkbox" class="complete-checkbox" onchange="finishTask(this)" />
           <strong>${task}</strong>
-          <div style="margin-top: 5px; font-size: 0.9em; color: #555;">
-            ⏰ ${start} - ${end}
+          <div class="details">
+            📅 Due: ${due}<br>
+            ⏰ ${start} - ${end}<br>
+            🚦 Priority: <strong>${priority}</strong>
           </div>
         </div>
         <button onclick="deleteItem(event)">Delete</button>
@@ -51,6 +62,19 @@
       document.getElementById("taskInput").value = "";
       document.getElementById("startTime").value = "";
       document.getElementById("endTime").value = "";
+      document.getElementById("dueDate").value = "";
+      document.getElementById("priority").value = "Low";
+
+      // Reminder alert
+      const now = new Date();
+      const dueTime = new Date(due + 'T' + start);
+      const timeUntilDue = dueTime.getTime() - now.getTime();
+
+      if (timeUntilDue > 0) {
+        setTimeout(() => {
+          alert(`⏰ Reminder: It's time to start task - "${task}"`);
+        }, timeUntilDue);
+      }
     }
 
     function deleteItem(event) {
@@ -59,7 +83,7 @@
 
     function finishTask(checkbox) {
       if (checkbox.checked) {
-        alert("You're completed the task ✅");
+        alert("You've completed the task ✅");
         const li = checkbox.closest("li");
         li.style.opacity = "0.5";
         setTimeout(() => {
